@@ -12,6 +12,7 @@ export interface Character {
   personal: {
     clan: string;
     sex: string;
+    affiliation: string[];
   };
   family: {
     father?: string;
