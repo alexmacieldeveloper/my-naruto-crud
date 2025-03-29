@@ -4,6 +4,7 @@ import { Character } from "./types/Character";
 import CharacterCard from "./components/CharacterCard";
 import FilterModal from "./components/ModalFilter";
 import { useFavorites } from "./store/useFavorites";
+import EditCharacterModal from "./components/EditCharacterModal";
 
 const App: React.FC = () => {
   const [characters, setCharacters] = useState<Character[]>([]);
@@ -16,15 +17,19 @@ const App: React.FC = () => {
   const [selectedGender, setSelectedGender] = useState<string>("");
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
+  const [characterToEdit, setCharacterToEdit] = useState<Character | null>(null);
 
   const { favorites, addFavorite, removeFavorite } = useFavorites();
 
+  // Carregar personagens da API e do localStorage
   useEffect(() => {
     const fetchCharacters = async () => {
       try {
         const data = await getCharacters();
-        setCharacters(data);
-        setFilteredCharacters(data);
+        const storedCharacters = JSON.parse(localStorage.getItem("customCharacters") || "[]");
+        setCharacters([...data, ...storedCharacters]);
+        setFilteredCharacters([...data, ...storedCharacters]);
       } catch (error) {
         console.error("Erro ao carregar personagens:", error);
       } finally {
@@ -35,27 +40,30 @@ const App: React.FC = () => {
     fetchCharacters();
   }, []);
 
+  // Função de filtro
   const filterCharacters = useCallback(() => {
     let filtered = characters;
 
+    // Filtro por nome
     if (searchTerm) {
       filtered = filtered.filter((character) =>
         character.name.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
+    // Filtro por clã
     if (selectedClan) {
       filtered = filtered.filter((character) => {
         const clans = Array.isArray(character.personal?.clan)
           ? character.personal.clan
           : [character.personal?.clan]; // Garante que sempre seja um array
-  
         return clans.some((clan) =>
           clan?.toLowerCase().includes(selectedClan.toLowerCase())
         );
       });
     }
 
+    // Filtro por aldeia
     if (selectedVillage) {
       filtered = filtered.filter((character) =>
         character.personal?.affiliation?.some((village) =>
@@ -64,6 +72,7 @@ const App: React.FC = () => {
       );
     }
 
+    // Filtro por gênero
     if (selectedGender) {
       filtered = filtered.filter(
         (character) =>
@@ -74,9 +83,24 @@ const App: React.FC = () => {
     setFilteredCharacters(filtered);
   }, [characters, searchTerm, selectedClan, selectedVillage, selectedGender]);
 
+  // Aplicar filtro sempre que os filtros ou personagens mudarem
   useEffect(() => {
     filterCharacters();
   }, [filterCharacters]);
+
+  const handleEditCharacter = (character: Character) => {
+    setCharacterToEdit(character);
+    setIsEditModalOpen(true);
+  };
+
+  const handleSaveEditedCharacter = (updatedCharacter: Character) => {
+    const updatedCharacters = characters.map((character) =>
+      character.id === updatedCharacter.id ? updatedCharacter : character
+    );
+    setCharacters(updatedCharacters);
+    setFilteredCharacters(updatedCharacters);
+    setIsEditModalOpen(false);
+  };
 
   if (loading) {
     return <div className="p-6 text-center">Carregando...</div>;
@@ -113,16 +137,22 @@ const App: React.FC = () => {
         setSelectedGender={setSelectedGender}
         applyFilters={filterCharacters}
       />
+
+      {/* Modal de Edição */}
+      <EditCharacterModal
+        isOpen={isEditModalOpen}
+        closeModal={() => setIsEditModalOpen(false)}
+        characterToEdit={characterToEdit}
+        onSave={handleSaveEditedCharacter}
+      />
+
+      {/* Exibir Favoritos */}
       {favorites.length > 0 && (
         <div className="mt-7 mb-8">
-          <p className="text-left text-2xl text-orange-500">
-            Personagens Favoritos
-          </p>
+          <p className="text-left text-2xl text-orange-500">Personagens Favoritos</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {favorites.map((character) => {
-              const isFavorite = favorites.some(
-                (fav) => fav.id === character.id
-              );
+              const isFavorite = favorites.some((fav) => fav.id === character.id);
               return (
                 <CharacterCard
                   key={character.id}
@@ -133,12 +163,15 @@ const App: React.FC = () => {
                       : () => addFavorite(character)
                   }
                   isFavorite={isFavorite}
+                  onEdit={() => handleEditCharacter(character)}
                 />
               );
             })}
           </div>
         </div>
       )}
+
+      {/* Exibir personagens filtrados */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {filteredCharacters.map((character) => {
           const isFavorite = favorites.some((fav) => fav.id === character.id);
@@ -152,6 +185,7 @@ const App: React.FC = () => {
                   : () => addFavorite(character)
               }
               isFavorite={isFavorite}
+              onEdit={() => handleEditCharacter(character)}
             />
           );
         })}
