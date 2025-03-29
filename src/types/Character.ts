@@ -10,7 +10,7 @@ export interface Character {
     game?: string;
   };
   personal: {
-    clan: string;
+    clan: string[];
     sex: string;
     affiliation: string[];
   };
