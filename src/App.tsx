@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { getCharacters } from "./services/api";
 import { Character } from "./types/Character";
 import CharacterCard from "./components/CharacterCard";
@@ -19,7 +19,6 @@ const App: React.FC = () => {
 
   const { favorites, addFavorite, removeFavorite } = useFavorites();
 
-
   useEffect(() => {
     const fetchCharacters = async () => {
       try {
@@ -36,7 +35,7 @@ const App: React.FC = () => {
     fetchCharacters();
   }, []);
 
-  const filterCharacters = () => {
+  const filterCharacters = useCallback(() => {
     let filtered = characters;
 
     if (searchTerm) {
@@ -47,16 +46,13 @@ const App: React.FC = () => {
 
     if (selectedClan) {
       filtered = filtered.filter((character) => {
-        const clan = character.personal?.clan;
-
-        if (Array.isArray(clan)) {
-          return clan.some((clanItem) =>
-            clanItem.toLowerCase().includes(selectedClan.toLowerCase())
-          );
-        } else if (typeof clan === "string") {
-          return clan.toLowerCase().includes(selectedClan.toLowerCase());
-        }
-        return false;
+        const clans = Array.isArray(character.personal?.clan)
+          ? character.personal.clan
+          : [character.personal?.clan]; // Garante que sempre seja um array
+  
+        return clans.some((clan) =>
+          clan?.toLowerCase().includes(selectedClan.toLowerCase())
+        );
       });
     }
 
@@ -76,12 +72,12 @@ const App: React.FC = () => {
     }
 
     setFilteredCharacters(filtered);
-  };
+  }, [characters, searchTerm, selectedClan, selectedVillage, selectedGender]);
 
   useEffect(() => {
     filterCharacters();
-  }, [searchTerm, selectedClan, selectedVillage, selectedGender]);
-  
+  }, [filterCharacters]);
+
   if (loading) {
     return <div className="p-6 text-center">Carregando...</div>;
   }
@@ -119,7 +115,9 @@ const App: React.FC = () => {
       />
       {favorites.length > 0 && (
         <div className="mt-7 mb-8">
-          <p className="text-left text-sm text-orange-500">Personagens Favoritos</p>
+          <p className="text-left text-2xl text-orange-500">
+            Personagens Favoritos
+          </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {favorites.map((character) => {
               const isFavorite = favorites.some(
