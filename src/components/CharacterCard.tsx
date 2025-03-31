@@ -52,19 +52,18 @@ const CharacterCard: React.FC<CharacterCardProps> = ({
 
       <p className="text-gray-500">Sexo: {character.personal.sex}</p>
 
-      {/* Botão de edição */}
-      <button onClick={() => onEdit(character)} className="mt-4 text-blue-500">
-        Editar
-      </button>
+      <div className="flex justify-between mt-3">
+        <Button onClick={() => onEdit(character)} className="bg-blue-500">
+          Editar
+        </Button>
 
-      {/* Botão de remoção */}
-      <Button
-        onClick={() => onRemove(character.id.toString())} // Passando o ID do personagem
-        variant="danger"
-        className="mt-4"
-      >
-        Remover
-      </Button>
+        <Button
+          onClick={() => onRemove(character.id.toString())} // Passando o ID do personagem
+          variant="danger"
+        >
+          Remover
+        </Button>
+      </div>
     </div>
   );
 };
