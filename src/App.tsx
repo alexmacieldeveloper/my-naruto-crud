@@ -25,14 +25,20 @@ const App: React.FC = () => {
 
   const { favorites, addFavorite, removeFavorite } = useFavorites();
 
-  // Carregar personagens da API e do localStorage
   useEffect(() => {
     const fetchCharacters = async () => {
       try {
         const data = await getCharacters();
         const storedCharacters = JSON.parse(localStorage.getItem("customCharacters") || "[]");
-        setCharacters([...data, ...storedCharacters]);
-        setFilteredCharacters([...data, ...storedCharacters]);
+  
+        const allCharacters = [...data, ...storedCharacters];
+  
+        const uniqueCharacters = Array.from(
+          new Map(allCharacters.map((character) => [character.id, character])).values()
+        );
+  
+        setCharacters(uniqueCharacters);
+        setFilteredCharacters(uniqueCharacters);
       } catch (error) {
         console.error("Erro ao carregar personagens:", error);
       } finally {
@@ -105,6 +111,32 @@ const App: React.FC = () => {
     setIsEditModalOpen(false);
   };
 
+  const handleRemoveCharacter = (character: Character) => {
+    
+    const updatedCharacters = characters.filter((char) => char.id !== character.id);
+    setCharacters(updatedCharacters);
+    setFilteredCharacters(updatedCharacters);
+
+    
+    removeFavorite(character.id.toString());
+
+
+    const updatedFavorites = favorites.filter((fav) => fav.id !== character.id);
+    localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
+    localStorage.setItem("customCharacters", JSON.stringify(updatedCharacters)); 
+  };
+
+  const toggleFavorite = (character: Character) => {
+    if (favorites.some((fav) => fav.id === character.id)) {
+      removeFavorite(character.id.toString());
+    } else {
+      addFavorite(character);
+    }
+
+    localStorage.setItem("favorites", JSON.stringify(favorites));
+  };
+
+
   if (loading) {
     return <div className="p-6 text-center">Carregando...</div>;
   }
@@ -115,7 +147,7 @@ const App: React.FC = () => {
         Personagens de Naruto
       </h1>
       <div className="flex justify-start mb-6">
-        {/* Novo componente de busca */}
+        {/* Componente de busca */}
         <SearchBar searchTerm={searchTerm} onSearchChange={setSearchTerm} />
         
         <Button onClick={() => setIsModalOpen(true)}>Filtrar</Button>
@@ -141,23 +173,21 @@ const App: React.FC = () => {
       />
 
       {/* Exibir Favoritos */}
-      {favorites.length > 0 && <FavoritesCharacters onEdit={handleEditCharacter} />}
+      {favorites.length > 0 && <FavoritesCharacters onEdit={handleEditCharacter} onRemove={handleRemoveCharacter} toggleFavorite={toggleFavorite}/>}
 
       {/* Exibir personagens filtrados */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {filteredCharacters.map((character) => {
           const isFavorite = favorites.some((fav) => fav.id === character.id);
+          
           return (
             <CharacterCard
               key={character.id}
               character={character}
-              toggleFavorite={
-                isFavorite
-                  ? () => removeFavorite(character.id.toString())
-                  : () => addFavorite(character)
-              }
+              toggleFavorite={() => toggleFavorite(character)}
               isFavorite={isFavorite}
               onEdit={() => handleEditCharacter(character)}
+              onRemove={() => handleRemoveCharacter(character)}
             />
           );
         })}
