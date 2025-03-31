@@ -2,10 +2,16 @@ import { Character } from "../types/Character";
 import CharacterCard from "./CharacterCard";
 import { useFavorites } from "../store/useFavorites";
 
-const FavoritesCharacters = ({ onEdit }: { onEdit: (character: Character) => void }) => {
-  const { favorites, addFavorite, removeFavorite } = useFavorites();
+interface FavoritesCharactersProps {
+  onEdit: (character: Character) => void;
+  onRemove: (character: Character) => void;
+  toggleFavorite: (character: Character) => void;
+}
 
-  if (favorites.length === 0) return null; // Oculta a seção se não houver favoritos
+const FavoritesCharacters: React.FC<FavoritesCharactersProps> = ({ onEdit, onRemove, toggleFavorite }) => {
+  const { favorites } = useFavorites();
+
+  if (favorites.length === 0) return null;
 
   return (
     <div className="mt-7 mb-8">
@@ -15,13 +21,11 @@ const FavoritesCharacters = ({ onEdit }: { onEdit: (character: Character) => voi
           <CharacterCard
             key={character.id}
             character={character}
-            toggleFavorite={() =>
-              favorites.some((fav) => fav.id === character.id)
-                ? removeFavorite(character.id.toString())
-                : addFavorite(character)
+            toggleFavorite={() => toggleFavorite(character)
             }
             isFavorite
             onEdit={() => onEdit(character)}
+            onRemove={() => onRemove(character)}
           />
         ))}
       </div>

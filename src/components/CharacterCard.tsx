@@ -1,10 +1,12 @@
 import { Character } from "../types/Character";
+import Button from "./Button";
 
 interface CharacterCardProps {
   character: Character;
   toggleFavorite: () => void;
   isFavorite: boolean;
   onEdit: (character: Character) => void;
+  onRemove: (characterId: string) => void;
 }
 
 const CharacterCard: React.FC<CharacterCardProps> = ({
@@ -12,6 +14,7 @@ const CharacterCard: React.FC<CharacterCardProps> = ({
   toggleFavorite,
   isFavorite,
   onEdit,
+  onRemove,
 }) => {
   return (
     <div className="bg-white shadow-md p-4 rounded-lg">
@@ -49,12 +52,19 @@ const CharacterCard: React.FC<CharacterCardProps> = ({
 
       <p className="text-gray-500">Sexo: {character.personal.sex}</p>
 
-      <button
-        onClick={() => onEdit(character)}
-        className="mt-4 text-blue-500 hover:underline"
-      >
+      {/* Botão de edição */}
+      <button onClick={() => onEdit(character)} className="mt-4 text-blue-500">
         Editar
       </button>
+
+      {/* Botão de remoção */}
+      <Button
+        onClick={() => onRemove(character.id.toString())} // Passando o ID do personagem
+        variant="danger"
+        className="mt-4"
+      >
+        Remover
+      </Button>
     </div>
   );
 };
