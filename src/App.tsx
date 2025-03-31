@@ -5,6 +5,7 @@ import CharacterCard from "./components/CharacterCard";
 import FilterModal from "./components/ModalFilter";
 import { useFavorites } from "./store/useFavorites";
 import EditCharacterModal from "./components/EditCharacterModal";
+import FavoritesCharacters from "./components/FavoritesCharacters";
 
 const App: React.FC = () => {
   const [characters, setCharacters] = useState<Character[]>([]);
@@ -147,29 +148,7 @@ const App: React.FC = () => {
       />
 
       {/* Exibir Favoritos */}
-      {favorites.length > 0 && (
-        <div className="mt-7 mb-8">
-          <p className="text-left text-2xl text-orange-500">Personagens Favoritos</p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {favorites.map((character) => {
-              const isFavorite = favorites.some((fav) => fav.id === character.id);
-              return (
-                <CharacterCard
-                  key={character.id}
-                  character={character}
-                  toggleFavorite={
-                    isFavorite
-                      ? () => removeFavorite(character.id.toString())
-                      : () => addFavorite(character)
-                  }
-                  isFavorite={isFavorite}
-                  onEdit={() => handleEditCharacter(character)}
-                />
-              );
-            })}
-          </div>
-        </div>
-      )}
+      {favorites.length > 0 && <FavoritesCharacters onEdit={handleEditCharacter} />}
 
       {/* Exibir personagens filtrados */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
