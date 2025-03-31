@@ -1,5 +1,6 @@
 import React from 'react';
 import CharacterFilter from './CharacterFilter';
+import Button from './Button';
 
 interface FilterModalProps {
   isOpen: boolean;
@@ -38,22 +39,18 @@ const FilterModal: React.FC<FilterModalProps> = ({
           selectedGender={selectedGender}
           setSelectedGender={setSelectedGender}
         />
-        <div className="flex justify-end mt-4">
-          <button
+        <div className="flex justify-between mt-4">
+          <Button             
             onClick={() => {
               applyFilters(); 
               closeModal(); 
-            }}
-            className="bg-orange-500 text-white p-2 rounded"
-          >
-            Filtrar
-          </button>
-          <button
+            }}>Filtrar</Button>
+          <Button
             onClick={closeModal}
-            className="bg-gray-300 text-black p-2 rounded ml-2"
+            variant='secondary'
           >
             Cancelar
-          </button>
+          </Button>
         </div>
       </div>
     </div>

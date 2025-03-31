@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Character } from "../types/Character";
+import Button from "./Button";
 
 interface EditCharacterModalProps {
   isOpen: boolean;
@@ -132,15 +133,14 @@ const EditCharacterModal: React.FC<EditCharacterModalProps> = ({
           onChange={(e) => setGender(e.target.value)}
         />
         <div className="flex justify-between">
-          <button onClick={closeModal} className="bg-gray-300 p-2 rounded">
+          <Button onClick={closeModal} variant="secondary">
             Cancelar
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={handleSave}
-            className="bg-orange-500 text-white p-2 rounded"
           >
             Salvar
-          </button>
+          </Button>
         </div>
       </div>
     </div>

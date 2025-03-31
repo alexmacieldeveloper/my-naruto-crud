@@ -6,6 +6,8 @@ import FilterModal from "./components/ModalFilter";
 import { useFavorites } from "./store/useFavorites";
 import EditCharacterModal from "./components/EditCharacterModal";
 import FavoritesCharacters from "./components/FavoritesCharacters";
+import SearchBar from "./components/SearchBar";
+import Button from "./components/Button";
 
 const App: React.FC = () => {
   const [characters, setCharacters] = useState<Character[]>([]);
@@ -112,20 +114,11 @@ const App: React.FC = () => {
       <h1 className="text-2xl font-bold mb-4 text-orange-500">
         Personagens de Naruto
       </h1>
-      <div className="flex justify-evenly mb-6">
-        <input
-          type="text"
-          className="search-input p-2 border rounded w-1/2"
-          placeholder="Buscar personagem..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-        <button
-          onClick={() => setIsModalOpen(true)}
-          className="bg-orange-500 text-white p-2 rounded w-24"
-        >
-          Filtrar
-        </button>
+      <div className="flex justify-start mb-6">
+        {/* Novo componente de busca */}
+        <SearchBar searchTerm={searchTerm} onSearchChange={setSearchTerm} />
+        
+        <Button onClick={() => setIsModalOpen(true)}>Filtrar</Button>
       </div>
       <FilterModal
         isOpen={isModalOpen}
