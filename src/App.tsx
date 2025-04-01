@@ -21,7 +21,9 @@ const App: React.FC = () => {
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
-  const [characterToEdit, setCharacterToEdit] = useState<Character | null>(null);
+  const [characterToEdit, setCharacterToEdit] = useState<Character | null>(
+    null
+  );
 
   const { favorites, addFavorite, removeFavorite } = useFavorites();
 
@@ -29,14 +31,18 @@ const App: React.FC = () => {
     const fetchCharacters = async () => {
       try {
         const data = await getCharacters();
-        const storedCharacters = JSON.parse(localStorage.getItem("customCharacters") || "[]");
-  
-        const allCharacters = [...data, ...storedCharacters];
-  
-        const uniqueCharacters = Array.from(
-          new Map(allCharacters.map((character) => [character.id, character])).values()
+        const storedCharacters = JSON.parse(
+          localStorage.getItem("customCharacters") || "[]"
         );
-  
+
+        const allCharacters = [...data, ...storedCharacters];
+
+        const uniqueCharacters = Array.from(
+          new Map(
+            allCharacters.map((character) => [character.id, character])
+          ).values()
+        );
+
         setCharacters(uniqueCharacters);
         setFilteredCharacters(uniqueCharacters);
       } catch (error) {
@@ -112,18 +118,17 @@ const App: React.FC = () => {
   };
 
   const handleRemoveCharacter = (character: Character) => {
-    
-    const updatedCharacters = characters.filter((char) => char.id !== character.id);
+    const updatedCharacters = characters.filter(
+      (char) => char.id !== character.id
+    );
     setCharacters(updatedCharacters);
     setFilteredCharacters(updatedCharacters);
 
-    
     removeFavorite(character.id.toString());
-
 
     const updatedFavorites = favorites.filter((fav) => fav.id !== character.id);
     localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
-    localStorage.setItem("customCharacters", JSON.stringify(updatedCharacters)); 
+    localStorage.setItem("customCharacters", JSON.stringify(updatedCharacters));
   };
 
   const toggleFavorite = (character: Character) => {
@@ -135,7 +140,6 @@ const App: React.FC = () => {
 
     localStorage.setItem("favorites", JSON.stringify(favorites));
   };
-
 
   if (loading) {
     return <div className="p-6 text-center">Carregando...</div>;
@@ -149,7 +153,7 @@ const App: React.FC = () => {
       <div className="flex justify-start mb-6">
         {/* Componente de busca */}
         <SearchBar searchTerm={searchTerm} onSearchChange={setSearchTerm} />
-        
+
         <Button onClick={() => setIsModalOpen(true)}>Filtrar</Button>
       </div>
       <FilterModal
@@ -173,13 +177,19 @@ const App: React.FC = () => {
       />
 
       {/* Exibir Favoritos */}
-      {favorites.length > 0 && <FavoritesCharacters onEdit={handleEditCharacter} onRemove={handleRemoveCharacter} toggleFavorite={toggleFavorite}/>}
+      {favorites.length > 0 && (
+        <FavoritesCharacters
+          onEdit={handleEditCharacter}
+          onRemove={handleRemoveCharacter}
+          toggleFavorite={toggleFavorite}
+        />
+      )}
 
       {/* Exibir personagens filtrados */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {filteredCharacters.map((character) => {
           const isFavorite = favorites.some((fav) => fav.id === character.id);
-          
+
           return (
             <CharacterCard
               key={character.id}

@@ -17,7 +17,9 @@ const CharacterCard: React.FC<CharacterCardProps> = ({
   onRemove,
 }) => {
   return (
-    <div className="bg-white shadow-md p-4 rounded-lg">
+    <div className={`p-4 border rounded-lg ${
+      isFavorite ? "bg-yellow-100 border-orange-500" : "bg-white border-gray-300"
+    }`}>
       <div className="flex justify-between items-center">
         <button
           onClick={toggleFavorite}

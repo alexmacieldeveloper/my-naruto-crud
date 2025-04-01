@@ -15,8 +15,8 @@ const FavoritesCharacters: React.FC<FavoritesCharactersProps> = ({ onEdit, onRem
 
   return (
     <div className="mt-7 mb-8">
-      <p className="text-left text-2xl text-orange-500">Personagens Favoritos</p>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <p className="text-left text-2xl text-orange-500 font-bold">Personagens Favoritos</p>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-3">
         {favorites.map((character) => (
           <CharacterCard
             key={character.id}
