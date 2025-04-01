@@ -2,7 +2,7 @@ export interface Character {
   id: number;
   name: string;
   images: string[];
-  debut: {
+  debut?: {
     manga?: string;
     anime?: string;
     novel?: string;
@@ -14,7 +14,7 @@ export interface Character {
     sex: string;
     affiliation: string[];
   };
-  family: {
+  family?: {
     father?: string;
     brother?: string;
     mother?: string;

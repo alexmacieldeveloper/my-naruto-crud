@@ -9,6 +9,7 @@ import FavoritesCharacters from "./components/FavoritesCharacters";
 import SearchBar from "./components/SearchBar";
 import Button from "./components/Button";
 import Notification from "./components/Notification";
+import NewCharacterModal from "./components/NewCharacterModal";
 
 const App: React.FC = () => {
   const [characters, setCharacters] = useState<Character[]>([]);
@@ -20,6 +21,7 @@ const App: React.FC = () => {
   const [selectedVillage, setSelectedVillage] = useState<string>("");
   const [selectedGender, setSelectedGender] = useState<string>("");
 
+  const [isNewCharacterModalOpen, setIsNewCharacterModalOpen] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
   const [characterToEdit, setCharacterToEdit] = useState<Character | null>(
@@ -28,6 +30,7 @@ const App: React.FC = () => {
   const [isNotificationVisible, setIsNotificationVisible] = useState(false);
   const [notificationMessage, setNotificationMessage] = useState<string>('');
   const [notificationType, setNotificationType] = useState<'add' | 'remove'>('add');
+
   const { favorites, addFavorite, removeFavorite } = useFavorites();
 
   useEffect(() => {
@@ -106,6 +109,11 @@ const App: React.FC = () => {
     filterCharacters();
   }, [filterCharacters]);
 
+  const handleAddNewCharacter = (newCharacter: Character) => {
+    setCharacters((prev) => [newCharacter, ...prev]); // Adiciona o novo personagem à lista
+    setFilteredCharacters((prev) => [newCharacter, ...prev]);
+  };
+
   const handleEditCharacter = (character: Character) => {
     setCharacterToEdit(character);
     setIsEditModalOpen(true);
@@ -162,8 +170,10 @@ const App: React.FC = () => {
       {isNotificationVisible && (
         <Notification message={notificationMessage} onClose={() => setIsNotificationVisible(false)} type={notificationType}/>
       )}
-      <div className="flex justify-start mb-6">
+      <div className="flex justify-center mb-6">
         <SearchBar searchTerm={searchTerm} onSearchChange={setSearchTerm} />
+
+        <Button onClick={() => setIsNewCharacterModalOpen(true)} className="font-bold ml-3 mr-3">+</Button>
 
         <Button onClick={() => setIsModalOpen(true)}>Filtrar</Button>
       </div>
@@ -184,6 +194,12 @@ const App: React.FC = () => {
         closeModal={() => setIsEditModalOpen(false)}
         characterToEdit={characterToEdit}
         onSave={handleSaveEditedCharacter}
+      />
+
+      <NewCharacterModal
+        isOpen={isNewCharacterModalOpen}
+        closeModal={() => setIsNewCharacterModalOpen(false)}
+        onSave={handleAddNewCharacter} 
       />
 
       {favorites.length > 0 && (
