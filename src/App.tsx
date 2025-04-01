@@ -8,6 +8,7 @@ import EditCharacterModal from "./components/EditCharacterModal";
 import FavoritesCharacters from "./components/FavoritesCharacters";
 import SearchBar from "./components/SearchBar";
 import Button from "./components/Button";
+import Notification from "./components/Notification";
 
 const App: React.FC = () => {
   const [characters, setCharacters] = useState<Character[]>([]);
@@ -24,7 +25,9 @@ const App: React.FC = () => {
   const [characterToEdit, setCharacterToEdit] = useState<Character | null>(
     null
   );
-
+  const [isNotificationVisible, setIsNotificationVisible] = useState(false);
+  const [notificationMessage, setNotificationMessage] = useState<string>('');
+  const [notificationType, setNotificationType] = useState<'add' | 'remove'>('add');
   const { favorites, addFavorite, removeFavorite } = useFavorites();
 
   useEffect(() => {
@@ -134,8 +137,14 @@ const App: React.FC = () => {
   const toggleFavorite = (character: Character) => {
     if (favorites.some((fav) => fav.id === character.id)) {
       removeFavorite(character.id.toString());
+      setNotificationMessage(`${character.name} foi removido dos favoritos!`);
+      setIsNotificationVisible(true);
+      setNotificationType('remove')
     } else {
       addFavorite(character);
+      setNotificationMessage(`${character.name} foi adicionado aos favoritos!`);
+      setIsNotificationVisible(true);
+      setNotificationType('add')
     }
 
     localStorage.setItem("favorites", JSON.stringify(favorites));
@@ -150,8 +159,10 @@ const App: React.FC = () => {
       <h1 className="text-2xl font-bold mb-4 text-orange-500">
         Personagens de Naruto
       </h1>
+      {isNotificationVisible && (
+        <Notification message={notificationMessage} onClose={() => setIsNotificationVisible(false)} type={notificationType}/>
+      )}
       <div className="flex justify-start mb-6">
-        {/* Componente de busca */}
         <SearchBar searchTerm={searchTerm} onSearchChange={setSearchTerm} />
 
         <Button onClick={() => setIsModalOpen(true)}>Filtrar</Button>
@@ -168,7 +179,6 @@ const App: React.FC = () => {
         applyFilters={filterCharacters}
       />
 
-      {/* Modal de Edição */}
       <EditCharacterModal
         isOpen={isEditModalOpen}
         closeModal={() => setIsEditModalOpen(false)}
@@ -176,7 +186,6 @@ const App: React.FC = () => {
         onSave={handleSaveEditedCharacter}
       />
 
-      {/* Exibir Favoritos */}
       {favorites.length > 0 && (
         <FavoritesCharacters
           onEdit={handleEditCharacter}
@@ -185,7 +194,6 @@ const App: React.FC = () => {
         />
       )}
 
-      {/* Exibir personagens filtrados */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {filteredCharacters.map((character) => {
           const isFavorite = favorites.some((fav) => fav.id === character.id);
