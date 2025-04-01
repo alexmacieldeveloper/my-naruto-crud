@@ -47,10 +47,9 @@ Isso abrirá a aplicação no navegador com o endereço `http://localhost:3000`.
 
 Aqui estão as versões das principais tecnologias usadas no projeto:
 
-- **React**: v18.0.0
-- **TypeScript**: v4.4.4
-- **TailwindCSS**: v3.0.0
-- **Zustand**: v3.6.0
-- **React-Router-Dom**: v6.2.1
+- **React**: v19.0.0
+- **TypeScript**: v4.9.5
+- **TailwindCSS**: v3.4.17
+- **Zustand**: v5.0.3
 
 Essas versões são as que foram usadas para o desenvolvimento da aplicação, mas você pode verificar as versões exatas no `package.json`.
