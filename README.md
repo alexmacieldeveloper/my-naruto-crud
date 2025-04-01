@@ -1,46 +1,56 @@
-# Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Naruto CRUD
 
-## Available Scripts
+## Descrição do Projeto
 
-In the project directory, you can run:
+Este é um projeto de gerenciamento de personagens, onde é possível adicionar novos personagens personalizados, favoritar personagens existentes e salvar esses dados localmente utilizando o `localStorage`. A aplicação carrega personagens da **API Dattebayo**, que fornece dados sobre os personagens do universo Naruto, e permite que os usuários favoritem e removam personagens da lista de favoritos.
 
-### `npm start`
+### Funcionalidades principais:
+- **Adicionar Personagem**: O usuário pode adicionar personagens personalizados com nome, clã e gênero.
+- **Favoritar Personagens**: Os personagens podem ser marcados como favoritos, e esses favoritos são armazenados no `localStorage` para persistência de dados.
+- **Exibição de Personagens**: A aplicação carrega personagens da API Dattebayo e permite que o usuário interaja com a lista, incluindo adicionar novos personagens e favoritar.
+- **Persistência de Dados**: Todos os dados (personagens e favoritos) são armazenados no `localStorage` para garantir que os dados sejam persistentes, mesmo após um refresh na página.
+- **API de Naruto Dattebayo**: A aplicação consome uma API externa chamada **Dattebayo**, que retorna dados sobre os personagens do universo Naruto, como nome, clã, gênero, entre outras informações.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Passos para Rodar Localmente
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+Siga os passos abaixo para rodar o projeto em sua máquina localmente:
 
-### `npm test`
+### 1. Clonar o Repositório
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Primeiro, clone o repositório para sua máquina:
 
-### `npm run build`
+```bash
+git clone https://github.com/seu-usuario/my-naruto-crud.git
+cd my-naruto-crud
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### 2. Instalar Dependências
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Execute o comando abaixo para instalar as dependências necessárias:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```bash
+npm install
+```
 
-### `npm run eject`
+### 3. Rodar o Projeto
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+Após a instalação, inicie o servidor de desenvolvimento com:
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```bash
+npm start
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+Isso abrirá a aplicação no navegador com o endereço `http://localhost:3000`.
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+## Versões Usadas no Projeto
 
-## Learn More
+Aqui estão as versões das principais tecnologias usadas no projeto:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- **React**: v18.0.0
+- **TypeScript**: v4.4.4
+- **TailwindCSS**: v3.0.0
+- **Zustand**: v3.6.0
+- **React-Router-Dom**: v6.2.1
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Essas versões são as que foram usadas para o desenvolvimento da aplicação, mas você pode verificar as versões exatas no `package.json`.
