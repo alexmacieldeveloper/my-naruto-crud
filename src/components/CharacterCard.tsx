@@ -55,7 +55,7 @@ const CharacterCard: React.FC<CharacterCardProps> = ({
       <p className="text-gray-500">Sexo: {character.personal.sex}</p>
 
       <div className="flex justify-between mt-3">
-        <Button onClick={() => onEdit(character)} className="bg-blue-500">
+        <Button onClick={() => onEdit(character)}>
           Editar
         </Button>
 
