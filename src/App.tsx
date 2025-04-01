@@ -35,7 +35,7 @@ const App: React.FC = () => {
     "add"
   );
 
-  const { favorites, addFavorite, removeFavorite } = useFavorites();
+  const { favorites, addFavorite, removeFavorite, updateFavorite } = useFavorites();
 
   useEffect(() => {
     const fetchCharacters = async () => {
@@ -138,8 +138,14 @@ const App: React.FC = () => {
     );
     setCharacters(updatedCharacters);
     setFilteredCharacters(updatedCharacters);
+  
+    localStorage.setItem("customCharacters", JSON.stringify(updatedCharacters));
+  
+    updateFavorite(updatedCharacter);
+  
     setIsEditModalOpen(false);
   };
+  
 
   const handleRemoveCharacter = (character: Character) => {
     const updatedCharacters = characters.filter(
@@ -254,3 +260,4 @@ const App: React.FC = () => {
 };
 
 export default App;
+
