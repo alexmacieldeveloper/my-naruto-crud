@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
+import Footer from "./components/Footer";
 import { getCharacters } from "./services/api";
 import { Character } from "./types/Character";
 import CharacterCard from "./components/CharacterCard";
@@ -21,15 +22,18 @@ const App: React.FC = () => {
   const [selectedVillage, setSelectedVillage] = useState<string>("");
   const [selectedGender, setSelectedGender] = useState<string>("");
 
-  const [isNewCharacterModalOpen, setIsNewCharacterModalOpen] = useState<boolean>(false);
+  const [isNewCharacterModalOpen, setIsNewCharacterModalOpen] =
+    useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
   const [characterToEdit, setCharacterToEdit] = useState<Character | null>(
     null
   );
   const [isNotificationVisible, setIsNotificationVisible] = useState(false);
-  const [notificationMessage, setNotificationMessage] = useState<string>('');
-  const [notificationType, setNotificationType] = useState<'add' | 'remove'>('add');
+  const [notificationMessage, setNotificationMessage] = useState<string>("");
+  const [notificationType, setNotificationType] = useState<"add" | "remove">(
+    "add"
+  );
 
   const { favorites, addFavorite, removeFavorite } = useFavorites();
 
@@ -77,7 +81,7 @@ const App: React.FC = () => {
       filtered = filtered.filter((character) => {
         const clans = Array.isArray(character.personal?.clan)
           ? character.personal.clan
-          : [character.personal?.clan]; // Garante que sempre seja um array
+          : [character.personal?.clan]; 
         return clans.some((clan) =>
           clan?.toLowerCase().includes(selectedClan.toLowerCase())
         );
@@ -110,8 +114,17 @@ const App: React.FC = () => {
   }, [filterCharacters]);
 
   const handleAddNewCharacter = (newCharacter: Character) => {
-    setCharacters((prev) => [newCharacter, ...prev]); // Adiciona o novo personagem à lista
+    const updatedCharacters = [...characters, newCharacter];
+    setCharacters((prev) => [newCharacter, ...prev]); 
     setFilteredCharacters((prev) => [newCharacter, ...prev]);
+
+    localStorage.setItem("customCharacters", JSON.stringify(updatedCharacters));
+
+    const storedFavorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+    if (storedFavorites.some((fav: Character) => fav.id === newCharacter.id)) {
+      const updatedFavorites = [...storedFavorites, newCharacter];
+      localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
+    }
   };
 
   const handleEditCharacter = (character: Character) => {
@@ -147,15 +160,13 @@ const App: React.FC = () => {
       removeFavorite(character.id.toString());
       setNotificationMessage(`${character.name} foi removido dos favoritos!`);
       setIsNotificationVisible(true);
-      setNotificationType('remove')
+      setNotificationType("remove");
     } else {
       addFavorite(character);
       setNotificationMessage(`${character.name} foi adicionado aos favoritos!`);
       setIsNotificationVisible(true);
-      setNotificationType('add')
+      setNotificationType("add");
     }
-
-    localStorage.setItem("favorites", JSON.stringify(favorites));
   };
 
   if (loading) {
@@ -163,70 +174,82 @@ const App: React.FC = () => {
   }
 
   return (
-    <div className="p-6 text-center">
-      <h1 className="text-2xl font-bold mb-4 text-orange-500">
-        Personagens de Naruto
-      </h1>
-      {isNotificationVisible && (
-        <Notification message={notificationMessage} onClose={() => setIsNotificationVisible(false)} type={notificationType}/>
-      )}
-      <div className="flex justify-center mb-6">
-        <SearchBar searchTerm={searchTerm} onSearchChange={setSearchTerm} />
+    <>
+      <div className="p-6 text-center">
+        <h1 className="text-2xl font-bold mb-4 text-orange-500">
+          Personagens de Naruto
+        </h1>
+        {isNotificationVisible && (
+          <Notification
+            message={notificationMessage}
+            onClose={() => setIsNotificationVisible(false)}
+            type={notificationType}
+          />
+        )}
+        <div className="flex justify-center mb-6">
+          <SearchBar searchTerm={searchTerm} onSearchChange={setSearchTerm} />
 
-        <Button onClick={() => setIsNewCharacterModalOpen(true)} className="font-bold ml-3 mr-3">+</Button>
+          <Button
+            onClick={() => setIsNewCharacterModalOpen(true)}
+            className="font-bold ml-3 mr-3"
+          >
+            +
+          </Button>
 
-        <Button onClick={() => setIsModalOpen(true)}>Filtrar</Button>
-      </div>
-      <FilterModal
-        isOpen={isModalOpen}
-        closeModal={() => setIsModalOpen(false)}
-        selectedClan={selectedClan}
-        setSelectedClan={setSelectedClan}
-        selectedVillage={selectedVillage}
-        setSelectedVillage={setSelectedVillage}
-        selectedGender={selectedGender}
-        setSelectedGender={setSelectedGender}
-        applyFilters={filterCharacters}
-      />
-
-      <EditCharacterModal
-        isOpen={isEditModalOpen}
-        closeModal={() => setIsEditModalOpen(false)}
-        characterToEdit={characterToEdit}
-        onSave={handleSaveEditedCharacter}
-      />
-
-      <NewCharacterModal
-        isOpen={isNewCharacterModalOpen}
-        closeModal={() => setIsNewCharacterModalOpen(false)}
-        onSave={handleAddNewCharacter} 
-      />
-
-      {favorites.length > 0 && (
-        <FavoritesCharacters
-          onEdit={handleEditCharacter}
-          onRemove={handleRemoveCharacter}
-          toggleFavorite={toggleFavorite}
+          <Button onClick={() => setIsModalOpen(true)}>Filtrar</Button>
+        </div>
+        <FilterModal
+          isOpen={isModalOpen}
+          closeModal={() => setIsModalOpen(false)}
+          selectedClan={selectedClan}
+          setSelectedClan={setSelectedClan}
+          selectedVillage={selectedVillage}
+          setSelectedVillage={setSelectedVillage}
+          selectedGender={selectedGender}
+          setSelectedGender={setSelectedGender}
+          applyFilters={filterCharacters}
         />
-      )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filteredCharacters.map((character) => {
-          const isFavorite = favorites.some((fav) => fav.id === character.id);
+        <EditCharacterModal
+          isOpen={isEditModalOpen}
+          closeModal={() => setIsEditModalOpen(false)}
+          characterToEdit={characterToEdit}
+          onSave={handleSaveEditedCharacter}
+        />
 
-          return (
-            <CharacterCard
-              key={character.id}
-              character={character}
-              toggleFavorite={() => toggleFavorite(character)}
-              isFavorite={isFavorite}
-              onEdit={() => handleEditCharacter(character)}
-              onRemove={() => handleRemoveCharacter(character)}
-            />
-          );
-        })}
+        <NewCharacterModal
+          isOpen={isNewCharacterModalOpen}
+          closeModal={() => setIsNewCharacterModalOpen(false)}
+          onSave={handleAddNewCharacter}
+        />
+
+        {favorites.length > 0 && (
+          <FavoritesCharacters
+            onEdit={handleEditCharacter}
+            onRemove={handleRemoveCharacter}
+            toggleFavorite={toggleFavorite}
+          />
+        )}
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filteredCharacters.map((character) => {
+            const isFavorite = favorites.some((fav) => fav.id === character.id);
+
+            return (
+              <CharacterCard
+                key={character.id}
+                character={character}
+                toggleFavorite={() => toggleFavorite(character)}
+                isFavorite={isFavorite}
+                onEdit={() => handleEditCharacter(character)}
+                onRemove={() => handleRemoveCharacter(character)}
+              />
+            );
+          })}
+        </div>
       </div>
-    </div>
+      <Footer />
+    </>
   );
 };
 
